@@ -15,5 +15,9 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+mkdir -p storage/app/public/uploads/images
+mkdir -p storage/app/public/uploads/pdfs
+mkdir -p storage/app/public/uploads/excels
+
 # Atur permission
 chmod -R 775 storage bootstrap/cache
