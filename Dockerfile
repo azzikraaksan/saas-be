@@ -29,7 +29,6 @@ EXPOSE 8000
 
 # Install dependency Laravel
 RUN composer Install
-RUN npm install
 
 # Set permission folder storage dan bootstrap/cache
 RUN chown -R www-data:www-data /var/www \
