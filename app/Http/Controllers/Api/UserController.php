@@ -82,6 +82,7 @@ class UserController extends Controller
                     'folder' => 'users/excels',
                     'public_id' => $filename,
                     'access_mode' => 'public',
+                    'resource_type' => 'raw',
                 ]
             )->getSecurePath();
 
@@ -155,6 +156,7 @@ class UserController extends Controller
                     'folder' => 'users/excels',
                     'public_id' => $filename,
                     'access_mode' => 'public',
+                    'resource_type' => 'raw',
                 ]
             )->getSecurePath();
 
