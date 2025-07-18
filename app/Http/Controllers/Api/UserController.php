@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class UserController extends Controller
 {
@@ -46,15 +47,35 @@ class UserController extends Controller
 
         // Upload file jika dikirim
         if ($request->hasFile('image')) {
-            $user->image_path = $request->file('image')->store('uploads/images', 'public');
+            $file = $request->file('image');
+            $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+            $user->image_path = Cloudinary::upload($file->getRealPath(), [
+                'folder' => 'users/images',
+                'public_id' => $filename,
+            ])->getSecurePath();
         }
 
         if ($request->hasFile('pdf')) {
-            $user->pdf_path = $request->file('pdf')->store('uploads/pdfs', 'public');
+            $file = $request->file('pdf');
+            $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+            $user->pdf_path = Cloudinary::upload($file->getRealPath(), [
+                'folder' => 'users/pdfs',
+                'public_id' => $filename,
+                'resource_type' => 'raw'
+            ])->getSecurePath();
         }
 
         if ($request->hasFile('excel')) {
-            $user->excel_path = $request->file('excel')->store('uploads/excels', 'public');
+            $file = $request->file('excel');
+            $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+            $user->excel_path = Cloudinary::upload($file->getRealPath(), [
+                'folder' => 'users/excels',
+                'public_id' => $filename,
+                'resource_type' => 'raw'
+            ])->getSecurePath();
         }
 
         $user->save();
@@ -88,25 +109,37 @@ class UserController extends Controller
 
         // Upload ulang file jika ada
         if ($request->hasFile('image')) {
-            if ($user->image_path && Storage::disk('public')->exists($user->image_path)) {
-                Storage::disk('public')->delete($user->image_path);
-            }
-            $user->image_path = $request->file('image')->store('uploads/images', 'public');
+            $file = $request->file('image');
+            $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+            $user->image_path = Cloudinary::upload($file->getRealPath(), [
+                'folder' => 'users/images',
+                'public_id' => $filename,
+            ])->getSecurePath();
         }
 
         if ($request->hasFile('pdf')) {
-            if ($user->pdf_path && Storage::disk('public')->exists($user->pdf_path)) {
-                Storage::disk('public')->delete($user->pdf_path);
-            }
-            $user->pdf_path = $request->file('pdf')->store('uploads/pdfs', 'public');
+            $file = $request->file('pdf');
+            $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+            $user->pdf_path = Cloudinary::upload($file->getRealPath(), [
+                'folder' => 'users/pdfs',
+                'public_id' => $filename,
+                'resource_type' => 'raw'
+            ])->getSecurePath();
         }
 
         if ($request->hasFile('excel')) {
-            if ($user->excel_path && Storage::disk('public')->exists($user->excel_path)) {
-                Storage::disk('public')->delete($user->excel_path);
-            }
-            $user->excel_path = $request->file('excel')->store('uploads/excels', 'public');
+            $file = $request->file('excel');
+            $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+            $user->excel_path = Cloudinary::upload($file->getRealPath(), [
+                'folder' => 'users/excels',
+                'public_id' => $filename,
+                'resource_type' => 'raw'
+            ])->getSecurePath();
         }
+
 
         $user->save();
 
@@ -121,10 +154,26 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Hapus file yang terkait jika ada
+        // Hapus file dari Cloudinary
         foreach (['image_path', 'pdf_path', 'excel_path'] as $field) {
-            if ($user->$field && Storage::disk('public')->exists($user->$field)) {
-                Storage::disk('public')->delete($user->$field);
+            if ($user->$field) {
+                // Extract public_id dari URL
+                $url = $user->$field;
+                $publicId = basename(parse_url($url, PHP_URL_PATH)); // dapet nama file.ext
+                $publicId = pathinfo($publicId, PATHINFO_FILENAME); // tanpa ekstensi
+
+                $folder = match ($field) {
+                    'image_path' => 'users/images',
+                    'pdf_path'   => 'users/pdfs',
+                    'excel_path' => 'users/excels',
+                    default      => '',
+                };
+
+                $resourceType = in_array($field, ['pdf_path', 'excel_path']) ? 'raw' : 'image';
+
+                Cloudinary::destroy("{$folder}/{$publicId}", [
+                    'resource_type' => $resourceType
+                ]);
             }
         }
 
