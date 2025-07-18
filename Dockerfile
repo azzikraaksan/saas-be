@@ -25,6 +25,8 @@ WORKDIR /var/www
 # Copy semua file project ke dalam container
 COPY . .
 
+EXPOSE 8000
+
 # Install dependency Laravel
 RUN composer install
 
@@ -32,5 +34,6 @@ RUN composer install
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 storage bootstrap/cache
 
-# Port expose (biar Railway tahu portnya)
-EXPOSE 8000
+# Jalankan artisan commands (opsional untuk production)
+# Jangan lupa override ini di Railway pakai start command sendiri
+CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
