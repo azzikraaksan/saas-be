@@ -66,6 +66,7 @@ class UserController extends Controller
                     'folder' => 'users/pdfs',
                     'resource_type' => 'auto',
                     'public_id' => $filename,
+                    'access_mode' => 'public',
                 ]
             )->getSecurePath();
 
@@ -80,8 +81,9 @@ class UserController extends Controller
                 $file->getRealPath(),
                 [
                     'folder' => 'users/excels',
-                    'resource_type' => 'auto',
+                    'resource_type' => 'raw',
                     'public_id' => $filename,
+                    'access_mode' => 'public',
                 ]
             )->getSecurePath();
 
@@ -139,6 +141,7 @@ class UserController extends Controller
                     'folder' => 'users/pdfs',
                     'resource_type' => 'auto',
                     'public_id' => $filename,
+                    'access_mode' => 'public',
                 ]
             )->getSecurePath();
 
@@ -153,8 +156,9 @@ class UserController extends Controller
                 $file->getRealPath(),
                 [
                     'folder' => 'users/excels',
-                    'resource_type' => 'auto',
+                    'resource_type' => 'raw',
                     'public_id' => $filename,
+                    'access_mode' => 'public',
                 ]
             )->getSecurePath();
 
