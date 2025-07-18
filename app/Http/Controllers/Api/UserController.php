@@ -60,22 +60,27 @@ class UserController extends Controller
             $file = $request->file('pdf');
             $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 
-            $user->pdf_path = Cloudinary::upload($file->getRealPath(), [
+            $pdfRawUrl = Cloudinary::upload($file->getRealPath(), [
                 'folder' => 'users/pdfs',
                 'public_id' => $filename,
                 'resource_type' => 'raw'
             ])->getSecurePath();
+
+            // Ubah 'raw/upload' ke 'media/upload' agar bisa di-preview
+            $user->pdf_path = str_replace('/raw/upload/', '/media/upload/', $pdfRawUrl);
         }
 
         if ($request->hasFile('excel')) {
             $file = $request->file('excel');
             $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 
-            $user->excel_path = Cloudinary::upload($file->getRealPath(), [
+            $excelRawUrl = Cloudinary::upload($file->getRealPath(), [
                 'folder' => 'users/excels',
                 'public_id' => $filename,
                 'resource_type' => 'raw'
             ])->getSecurePath();
+
+            $user->excel_path = str_replace('/raw/upload/', '/media/upload/', $excelRawUrl);
         }
 
         $user->save();
@@ -122,22 +127,27 @@ class UserController extends Controller
             $file = $request->file('pdf');
             $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 
-            $user->pdf_path = Cloudinary::upload($file->getRealPath(), [
+            $pdfRawUrl = Cloudinary::upload($file->getRealPath(), [
                 'folder' => 'users/pdfs',
                 'public_id' => $filename,
                 'resource_type' => 'raw'
             ])->getSecurePath();
+
+            // Ubah 'raw/upload' ke 'media/upload' agar bisa di-preview
+            $user->pdf_path = str_replace('/raw/upload/', '/media/upload/', $pdfRawUrl);
         }
 
         if ($request->hasFile('excel')) {
             $file = $request->file('excel');
             $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 
-            $user->excel_path = Cloudinary::upload($file->getRealPath(), [
+            $excelRawUrl = Cloudinary::upload($file->getRealPath(), [
                 'folder' => 'users/excels',
                 'public_id' => $filename,
                 'resource_type' => 'raw'
             ])->getSecurePath();
+
+            $user->excel_path = str_replace('/raw/upload/', '/media/upload/', $excelRawUrl);
         }
 
 
