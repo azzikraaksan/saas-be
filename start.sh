@@ -22,3 +22,6 @@ mkdir -p storage/app/public/uploads/excels
 
 # Atur permission
 chmod -R 775 storage bootstrap/cache
+
+# INI WAJIB BANGET
+php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
