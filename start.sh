@@ -8,9 +8,10 @@ php artisan key:generate --force
 php artisan storage:link
 
 # Jalankan migrate biar tabel kebentuk
-php artisan migrate --force
+php artisan migrate
 
 # Cache config (biar cepat)
+php artisan config:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
