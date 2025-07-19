@@ -16,18 +16,18 @@ class UserController extends Controller
         return view('users.create');
     }
 
-    // method menampilkan semua user
-    public function index()
-    {
-        $users = User::all();
-        return view('users.index', compact('users'));
-    }
-
-    // Menampilkan daftar semua user
+    // method menampilkan semua user laravel
     // public function index()
     // {
-    //     return response()->json(User::all());
+    //     $users = User::all();
+    //     return view('users.index', compact('users'));
     // }
+
+    // Menampilkan daftar semua user fe
+    public function index()
+    {
+        return response()->json(User::all());
+    }
 
     public function show($id)
     {
