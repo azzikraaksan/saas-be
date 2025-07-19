@@ -75,18 +75,24 @@ class UserController extends Controller
         if ($request->hasFile('excel')) {
             $file = $request->file('excel');
             $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $file->getClientOriginalExtension();
 
-            $excelUrl = Cloudinary::uploadFile(
-                $file->getRealPath(),
-                [
-                    'folder' => 'users/excels',
-                    'public_id' => $filename,
-                    'access_mode' => 'public',
-                    'resource_type' => 'raw',
-                ]
-            )->getSecurePath();
+            if (in_array($extension, ['xlsx', 'xls', 'csv'])) {
+                $excelUrl = Cloudinary::uploadFile(
+                    $file->getRealPath(),
+                    [
+                        'folder' => 'users/excels',
+                        'public_id' => $filename,
+                        'resource_type' => 'raw',
+                        'format' => $extension,
+                        'access_mode' => 'public',
+                    ]
+                )->getSecurePath();
 
-            $user->excel_path = $excelUrl;
+                $user->excel_path = $excelUrl;
+            } else {
+                return back()->with('error', 'File Excel tidak valid.');
+            }
         }
 
 
@@ -149,21 +155,25 @@ class UserController extends Controller
         if ($request->hasFile('excel')) {
             $file = $request->file('excel');
             $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $file->getClientOriginalExtension();
 
-            $excelUrl = Cloudinary::uploadFile(
-                $file->getRealPath(),
-                [
-                    'folder' => 'users/excels',
-                    'public_id' => $filename,
-                    'access_mode' => 'public',
-                    'resource_type' => 'raw',
-                ]
-            )->getSecurePath();
+            if (in_array($extension, ['xlsx', 'xls', 'csv'])) {
+                $excelUrl = Cloudinary::uploadFile(
+                    $file->getRealPath(),
+                    [
+                        'folder' => 'users/excels',
+                        'public_id' => $filename,
+                        'resource_type' => 'raw',
+                        'format' => $extension,
+                        'access_mode' => 'public',
+                    ]
+                )->getSecurePath();
 
-            $user->excel_path = $excelUrl;
+                $user->excel_path = $excelUrl;
+            } else {
+                return back()->with('error', 'File Excel tidak valid.');
+            }
         }
-
-
 
         $user->save();
 
