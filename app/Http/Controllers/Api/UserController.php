@@ -11,11 +11,23 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class UserController extends Controller
 {
-    // Menampilkan daftar semua user
+    public function create()
+    {
+        return view('users.create');
+    }
+
+    // method menampilkan semua user
     public function index()
     {
-        return response()->json(User::all());
+        $users = User::all();
+        return view('users.index', compact('users'));
     }
+
+    // Menampilkan daftar semua user
+    // public function index()
+    // {
+    //     return response()->json(User::all());
+    // }
 
     public function show($id)
     {
@@ -65,6 +77,7 @@ class UserController extends Controller
                 [
                     'folder' => 'users/pdfs',
                     'public_id' => $filename,
+                    'resource_type' => 'raw',
                     'access_mode' => 'public',
                 ]
             )->getSecurePath();
@@ -145,6 +158,7 @@ class UserController extends Controller
                 [
                     'folder' => 'users/pdfs',
                     'public_id' => $filename,
+                    'resource_type' => 'raw',
                     'access_mode' => 'public',
                 ]
             )->getSecurePath();
@@ -210,6 +224,7 @@ class UserController extends Controller
                 ]);
             }
         }
+
 
         $user->delete();
 
