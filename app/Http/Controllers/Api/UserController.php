@@ -50,12 +50,14 @@ class UserController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
+            'role'     => 'required|in:admin,user',
         ]);
 
         $user = new User();
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->password = Hash::make($validated['password']);
+        $user->role = $validated['role'];
 
         // Upload file jika dikirim
         if ($request->hasFile('image')) {
@@ -230,6 +232,29 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'User deleted successfully'
+        ]);
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            return response()->json(['message' => 'Email atau password salah'], 401);
+        }
+
+        // Kalau pakai token login (opsional)
+        // $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login berhasil',
+            'user'    => $user,
+            // 'token'   => $token
         ]);
     }
 }
