@@ -39,13 +39,3 @@ php artisan migrate
 ```bash
 php artisan serve
 ```
-
-# 🧪 Endpoints Utama
-Method	Endpoint	                Deskripsi
-POST	/api/register	            Register pengguna
-POST	/api/login	                Login pengguna/admin
-GET	    /api/checklists	            Ambil semua checklist milik user
-POST	/api/checklists/create	    Tambah checklist
-PUT	    /api/checklists/update/{id}	Edit checklist
-POST	/api/checklists/done/{id}	Tandai selesai
-DELETE	/api/checklists/delete/{id}	Hapus checklist
