@@ -5,52 +5,53 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Checklist;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ChecklistController extends Controller
 {
-    // List checklist milik user
-    public function index()
+    //checklist milik user tertentu
+    public function index(Request $request)
     {
-        $checklists = Checklist::where('user_id', Auth::id())->get();
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $checklists = Checklist::where('user_id', $request->user_id)->get();
+
         return response()->json($checklists);
     }
 
-    // Tambah checklist
+    //tambah checklist
     public function store(Request $request)
-{
-    $request->validate([
-        'user_id' => 'required|exists:users,id',
-        'title' => 'required|string',
-        'status' => 'required|in:belum,sudah',
-        'deadline' => 'nullable|date'
-    ]);
+    {
+        $request->validate([
+            'user_id'  => 'required|exists:users,id',
+            'title'    => 'required|string',
+            'status'   => 'required|in:Belum Selesai,Selesai',
+            'deadline' => 'nullable|date',
+        ]);
 
-    $checklist = Checklist::create([
-        'user_id' => $request->user_id,
-        'title' => $request->title,
-        'status' => $request->status,
-        'deadline' => $request->deadline
-    ]);
+        $checklist = Checklist::create([
+            'user_id'  => $request->user_id,
+            'title'    => $request->title,
+            'status'   => $request->status,
+            'deadline' => $request->deadline,
+        ]);
 
-    return response()->json([
-        'message' => 'Checklist berhasil dibuat',
-        'data' => $checklist
-    ]);
-}
+        return response()->json([
+            'message' => 'Checklist berhasil dibuat',
+            'data'    => $checklist,
+        ]);
+    }
 
-    // Update checklist
+    //update checklist
     public function update(Request $request, $id)
     {
-        $checklist = Checklist::where('id', $id)->where('user_id', Auth::id())->first();
-
-        if (!$checklist) {
-            return response()->json(['message' => 'Checklist tidak ditemukan'], 404);
-        }
+        $checklist = Checklist::findOrFail($id);
 
         $request->validate([
-            'title' => 'sometimes|required|string',
-            'status' => 'sometimes|in:Belum Selesai,Selesai',
+            'title'    => 'sometimes|required|string',
+            'status'   => 'sometimes|required|in:Belum Selesai,Selesai',
             'deadline' => 'nullable|date',
         ]);
 
@@ -59,39 +60,28 @@ class ChecklistController extends Controller
         return response()->json($checklist);
     }
 
-    // Hapus checklist
+    //hapus checklist
     public function destroy($id)
     {
-        $checklist = Checklist::where('id', $id)->where('user_id', Auth::id())->first();
-
-        if (!$checklist) {
-            return response()->json(['message' => 'Checklist tidak ditemukan'], 404);
-        }
-
+        $checklist = Checklist::findOrFail($id);
         $checklist->delete();
 
         return response()->json(['message' => 'Checklist berhasil dihapus']);
     }
 
-    // Tandai checklist sebagai selesai
+    //tandai checklist sebagai selesai
     public function markAsDone($id)
     {
-        $checklist = Checklist::where('id', $id)->where('user_id', Auth::id())->first();
-
-        if (!$checklist) {
-            return response()->json(['message' => 'Checklist tidak ditemukan'], 404);
-        }
-
+        $checklist = Checklist::findOrFail($id);
         $checklist->status = 'Selesai';
         $checklist->save();
 
         return response()->json(['message' => 'Checklist ditandai sebagai selesai']);
     }
 
-    // Admin: lihat semua checklist semua user
+    //lihat semua checklist semua user (admin)
     public function allChecklists()
     {
-        // Optional: tambahkan middleware/policy admin
         $checklists = Checklist::with('user:id,name,email')->get();
         return response()->json($checklists);
     }
